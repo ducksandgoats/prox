@@ -20,7 +20,7 @@ app.get('/prox', async (req, res) => {
         if(!req.query.link){
             throw new Error('must have link query string')
         }
-        browser = await puppeteer.launch({headless: true, executablePath: puppeteer.executablePath() || (await PCR({})).executablePath || process.env.EXEC});
+        browser = await puppeteer.launch({headless: true, executablePath: process.env.EXEC || puppeteer.executablePath() || (await PCR({})).executablePath});
         page = await browser.newPage();
         await page.setUserAgent(req.query.agent ? req.query.agent : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36')
 
