@@ -1,27 +1,11 @@
-#!/usr/bin/env node
-
+import 'dotenv/config'
 import express from 'express'
-import minimist from 'minimist'
 import cors from 'cors'
 import puppeteer from 'puppeteer-core'
 import PCR from 'puppeteer-chromium-resolver'
 const app = express()
 
-const argv = minimist(process.argv.slice(2), {
-  boolean: [
-    'cors'
-  ],
-  string: [
-    'host',
-  ],
-  default: {
-    'host': '0.0.0.0',
-    'port': 13579,
-    'cors': true
-  }
-})
-
-if(argv['cors']){
+if(JSON.parse(process.env.CROS)){
     app.use(cors())
 }
 
@@ -73,4 +57,4 @@ app.use((req, res) => {
     return res.status(400).send(`<html><head><title>not found</title></head><body><div><p>not found</p></div></body></html>`)
 })
 
-app.listen(argv['port'], argv['host'])
+app.listen(Number(process.env.PORT), process.env.HOST)
