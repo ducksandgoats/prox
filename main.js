@@ -5,7 +5,7 @@ import puppeteer from 'puppeteer-core'
 import PCR from 'puppeteer-chromium-resolver'
 const app = express()
 
-if(JSON.parse(process.env.CROS)){
+if(JSON.parse(process.env.CORS)){
     app.use(cors())
 }
 
