@@ -4,6 +4,9 @@ import cors from 'cors'
 import * as cheerio from 'cheerio'
 import puppeteer from 'puppeteer-core'
 import PCR from 'puppeteer-chromium-resolver'
+
+const execuPath = process.env.EXEC || puppeteer.executablePath() || (await PCR({})).executablePath
+
 const app = express()
 console.log(JSON.parse(process.env.CORS))
 if(JSON.parse(process.env.CORS)){
@@ -21,7 +24,7 @@ app.get('/prox', async (req, res) => {
         if(!req.query.link){
             throw new Error('must have link query string')
         }
-        browser = await puppeteer.launch({headless: true, executablePath: process.env.EXEC || puppeteer.executablePath() || (await PCR({})).executablePath});
+        browser = await puppeteer.launch({headless: true, executablePath: execuPath});
         page = await browser.newPage();
         await page.setUserAgent(req.query.agent ? req.query.agent : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36')
 
