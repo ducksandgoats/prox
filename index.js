@@ -8,7 +8,7 @@ import PCR from 'puppeteer-chromium-resolver'
 const execuPath = process.env.EXEC || puppeteer.executablePath() || (await PCR({})).executablePath
 
 const app = express()
-console.log(JSON.parse(process.env.CORS))
+
 if(JSON.parse(process.env.CORS)){
     app.use(cors())
 }
