@@ -86,6 +86,7 @@ app.get('/feed', async (req, res) => {
         res.set('Content-Type', 'application/rss+xml')
         return res.status(200).send(feed.rss2())
     } catch (error) {
+        console.error(error)
         if(page){
             await page.close()
         }
@@ -132,6 +133,7 @@ app.get('/prox', async (req, res) => {
 
         return res.status(200).send(pageSourceHTML)
     } catch (error) {
+        console.error(error)
         if(page){
             await page.close()
         }
