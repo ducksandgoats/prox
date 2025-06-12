@@ -52,7 +52,7 @@ app.get('/feed', async (req, res) => {
         }
         page = await browser.newPage();
         if(JSON.parse(process.env.RANDOM)){
-            await page.setUserAgent(req.query.agent ? req.query.agent : new UserAgent())
+            await page.setUserAgent(process.env.REPLACE ? (() => {let useragent = new UserAgent();const arr = process.env.REPLACE.split(',').filter(Boolean);arr.forEach((i) => {const data = i.split('|');useragent = useragent.replace(data[0], data[1]);});return useragent;})() : new UserAgent())
         }
 
         // Navigate the page to a URL.
@@ -115,7 +115,7 @@ app.get('/prox', async (req, res) => {
         }
         page = await browser.newPage();
         if(JSON.parse(process.env.RANDOM)){
-            await page.setUserAgent(req.query.agent ? req.query.agent : new UserAgent())
+            await page.setUserAgent(process.env.REPLACE ? (() => {let useragent = new UserAgent();const arr = process.env.REPLACE.split(',').filter(Boolean);arr.forEach((i) => {const data = i.split('|');useragent = useragent.replace(data[0], data[1]);});return useragent;})() : new UserAgent())
         }
 
         // Navigate the page to a URL.
