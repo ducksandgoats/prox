@@ -17,7 +17,12 @@
     "express": "^5.1.0",
     "feed": "^5.1.0",
     "puppeteer-chromium-resolver": "^24.0.1",
-    "puppeteer-core": "^24.10.0",
-    "rss": "^1.2.2"
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-adblocker": "^2.13.6",
+    "puppeteer-extra-plugin-anonymize-ua": "^2.4.6",
+    "puppeteer-extra-plugin-recaptcha": "^3.6.8",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "rss": "^1.2.2",
+    "user-agents": "^1.1.567"
   }
 }

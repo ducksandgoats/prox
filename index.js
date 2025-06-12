@@ -2,11 +2,27 @@ import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import * as cheerio from 'cheerio'
-import puppeteer from 'puppeteer-core'
+import puppeteer from 'puppeteer-extra'
 import PCR from 'puppeteer-chromium-resolver'
+import StealthPlugin from 'puppeteer-extra-plugin-stealth'
+import AdblockerPlugin from 'puppeteer-extra-plugin-adblocker'
+import UserAgentPlugin from 'puppeteer-extra-plugin-anonymize-ua'
+import RecaptchaPlugin from 'puppeteer-extra-plugin-recaptcha'
+import UserAgent from 'user-agents'
 import { Feed } from "feed"
 
-const browser = await puppeteer.launch({headless: true, executablePath: process.env.EXEC || puppeteer.executablePath() || (await PCR({})).executablePath});
+puppeteer.use(StealthPlugin())
+if(JSON.parse(process.env.ADBLOCK)){
+    puppeteer.use(AdblockerPlugin({interceptResolutionPriority: undefined})
+)
+}
+if(JSON.parse(process.env.RECAPTCHA)){
+    puppeteer.use(RecaptchaPlugin({provider: {id: process.env.ID,token: process.env.TOKEN},visualFeedback: true}))
+}
+if(JSON.parse(process.env.AGENT)){
+    puppeteer.use(UserAgentPlugin())
+}
+const browser = await puppeteer.launch({headless: process.env.HEADLESS ? JSON.parse(process.env.HEADLESS) : true, args: process.env.ARGS ? process.env.ARGS.split(',').filter(Boolean) : [], executablePath: process.env.EXEC || puppeteer.executablePath() || (await PCR({})).executablePath})
 
 async function handle(signal){
     console.log(signal)
@@ -35,15 +51,12 @@ app.get('/feed', async (req, res) => {
             throw new Error('must have link query string')
         }
         page = await browser.newPage();
-        await page.setUserAgent(req.query.agent ? req.query.agent : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36')
+        if(JSON.parse(process.env.RANDOM)){
+            await page.setUserAgent(req.query.agent ? req.query.agent : new UserAgent())
+        }
 
         // Navigate the page to a URL.
         await page.goto(req.query.link, { waitUntil: req.query.wait ? req.query.wait.split(',').filter(Boolean) : ['load'], timeout: req.query.timeout ? Number(req.query.timeout) : 30000 })
-
-        // Set screen size.
-        // await page.setViewport({width: 1080, height: 1024});
-
-        // await page.waitForNavigation({waitUntil: 'load'})
 
         // Locate the full title with a unique string.
         let pageSourceHTML = await page.content()
@@ -101,15 +114,12 @@ app.get('/prox', async (req, res) => {
             throw new Error('must have link query string')
         }
         page = await browser.newPage();
-        await page.setUserAgent(req.query.agent ? req.query.agent : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36')
+        if(JSON.parse(process.env.RANDOM)){
+            await page.setUserAgent(req.query.agent ? req.query.agent : new UserAgent())
+        }
 
         // Navigate the page to a URL.
         await page.goto(req.query.link, { waitUntil: req.query.wait ? req.query.wait.split(',').filter(Boolean) : ['load'], timeout: req.query.timeout ? Number(req.query.timeout) : 30000 })
-
-        // Set screen size.
-        // await page.setViewport({width: 1080, height: 1024});
-
-        // await page.waitForNavigation({waitUntil: 'load'})
 
         // Locate the full title with a unique string.
         let pageSourceHTML = await page.content()
