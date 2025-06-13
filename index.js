@@ -47,7 +47,7 @@ app.get('/', (req, res) => {
 app.get('/feed', async (req, res) => {
     let page
     try {
-        if(!req.query.link || !req.query.href || !req.query.title){
+        if(!req.query.link || !req.query.select || !req.query.href || !req.query.title){
             throw new Error('must have link query string')
         }
         page = await browser.newPage();
@@ -78,22 +78,27 @@ app.get('/feed', async (req, res) => {
             // pageSourceHTML = $.html()
         }
 
+        const useHTML = $('title').text()
+
         const feed = new Feed({
-            title: $('title').text(),
-            description: $('meta[name="description"]').text() || undefined,
+            title: useHTML,
+            description: $('meta[name="description"]').text() || `${req.query.link}\n${useHTML}`,
             id: req.query.link,
             link: req.query.link
         });
 
         let num = Date.now()
-        $(req.query.href).each((i, e) => {
+        const arr = req.query.ignore ? req.query.ignore.split(',').filter(Boolean) : []
+        $(req.query.select).each((i, e) => {
             const el = $(e)
-            const useLink = el.attr('href')
+            const useLink = el.find(req.query.href).attr('href')
             const useTitle = el.find(req.query.title).text()
-            if(useLink && useTitle){
+            const useDescription = req.query.description ? el.find(req.query.description).text() : null
+            if((useLink && useTitle) && !arr.includes(useLink) && !arr.includes(useTitle)){
                 feed.addItem({
                     link: useLink,
                     title: useTitle,
+                    description: useDescription || `${useLink}\n${useTitle}`,
                     date: new Date(num)
                 })
                 num = num - 86400000
