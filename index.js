@@ -19,7 +19,7 @@ if(JSON.parse(process.env.ADBLOCK)){
 if(JSON.parse(process.env.RECAPTCHA)){
     puppeteer.use(RecaptchaPlugin({provider: {id: process.env.ID,token: process.env.TOKEN},visualFeedback: true}))
 }
-if(JSON.parse(process.env.AGENT)){
+if(JSON.parse(process.env.UAGENT)){
     puppeteer.use(UserAgentPlugin())
 }
 const browser = await puppeteer.launch({headless: process.env.HEADLESS ? JSON.parse(process.env.HEADLESS) : true, args: process.env.ARGS ? process.env.ARGS.split(',').filter(Boolean) : [], executablePath: process.env.EXEC || puppeteer.executablePath() || (await PCR({})).executablePath})
