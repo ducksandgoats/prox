@@ -88,12 +88,16 @@ app.get('/feed', async (req, res) => {
         let num = Date.now()
         $(req.query.href).each((i, e) => {
             const el = $(e)
-            feed.addItem({
-                link: el.attr('href'),
-                title: el.find(req.query.title).text(),
-                date: new Date(num)
-            })
-            num = num - 86400000
+            const useLink = el.attr('href')
+            const useTitle = el.find(req.query.title).text()
+            if(useLink && useTitle){
+                feed.addItem({
+                    link: useLink,
+                    title: useTitle,
+                    date: new Date(num)
+                })
+                num = num - 86400000
+            }
         })
 
         res.set('Content-Type', 'application/rss+xml')
