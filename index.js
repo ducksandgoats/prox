@@ -20,7 +20,7 @@ if(JSON.parse(process.env.RECAPTCHA)){
     puppeteer.use(RecaptchaPlugin({provider: {id: process.env.ID,token: process.env.TOKEN},visualFeedback: true}))
 }
 if(JSON.parse(process.env.UAGENT)){
-    puppeteer.use(UserAgentPlugin())
+    puppeteer.use(UserAgentPlugin({stripHeadless: JSON.parse(process.env.STRIP) || false, makeWindows: JSON.parse(process.env.WINDOWS) || false}))
 }
 const browser = await puppeteer.launch({headless: process.env.HEADLESS ? JSON.parse(process.env.HEADLESS) : true, args: process.env.ARGS ? process.env.ARGS.split(',').filter(Boolean) : [], executablePath: process.env.EXEC || puppeteer.executablePath() || (await PCR({})).executablePath})
 
@@ -52,7 +52,7 @@ app.get('/feed', async (req, res) => {
         }
         page = await browser.newPage();
         if(JSON.parse(process.env.RANDOM)){
-            await page.setUserAgent(process.env.REPLACE ? (() => {let useragent = new UserAgent();const arr = process.env.REPLACE.split(',').filter(Boolean);arr.forEach((i) => {const data = i.split('|');useragent = useragent.replace(data[0], data[1]);});return useragent;})() : new UserAgent())
+            await page.setUserAgent(new UserAgent().toString())
         }
 
         // Navigate the page to a URL.
@@ -115,7 +115,7 @@ app.get('/prox', async (req, res) => {
         }
         page = await browser.newPage();
         if(JSON.parse(process.env.RANDOM)){
-            await page.setUserAgent(process.env.REPLACE ? (() => {let useragent = new UserAgent();const arr = process.env.REPLACE.split(',').filter(Boolean);arr.forEach((i) => {const data = i.split('|');useragent = useragent.replace(data[0], data[1]);});return useragent;})() : new UserAgent())
+            await page.setUserAgent(new UserAgent().toString())
         }
 
         // Navigate the page to a URL.
