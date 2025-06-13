@@ -90,7 +90,7 @@ app.get('/feed', async (req, res) => {
             const el = $(e)
             feed.addItem({
                 link: el.attr('href'),
-                title: el.find(req.query.title),
+                title: el.find(req.query.title).text(),
                 date: new Date(num)
             })
             num = num - 86400000
