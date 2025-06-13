@@ -82,7 +82,7 @@ app.get('/feed', async (req, res) => {
 
         const feed = new Feed({
             title: useHTML,
-            description: $('meta[name="description"]').text() || `${req.query.link}\n${useHTML}`,
+            description: $('meta[name="description"]').text() || `${req.query.link}|${useHTML}`,
             id: req.query.link,
             link: req.query.link
         });
@@ -98,7 +98,7 @@ app.get('/feed', async (req, res) => {
                 feed.addItem({
                     link: useLink,
                     title: useTitle,
-                    description: useDescription || `${useLink}\n${useTitle}`,
+                    description: useDescription || `${useLink}|${useTitle}`,
                     date: new Date(num)
                 })
                 num = num - 86400000
