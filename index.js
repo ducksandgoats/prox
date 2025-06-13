@@ -13,7 +13,7 @@ import { Feed } from "feed"
 
 puppeteer.use(StealthPlugin())
 if(JSON.parse(process.env.ADBLOCK)){
-    puppeteer.use(AdblockerPlugin({interceptResolutionPriority: undefined})
+    puppeteer.use(AdblockerPlugin({interceptResolutionPriority: process.env.INTERCEPT && JSON.parse(process.env.INTERCEPT) ? puppeteer.DEFAULT_INTERCEPT_RESOLUTION_PRIORITY : undefined})
 )
 }
 if(JSON.parse(process.env.RECAPTCHA)){
