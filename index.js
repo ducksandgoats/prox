@@ -17,7 +17,7 @@ if(JSON.parse(process.env.ADBLOCK)){
 )
 }
 if(JSON.parse(process.env.RECAPTCHA)){
-    puppeteer.use(RecaptchaPlugin({provider: {id: process.env.ID,token: process.env.TOKEN},visualFeedback: true}))
+    puppeteer.use(RecaptchaPlugin({provider: {id: '2captcha',token: process.env.TOKEN},visualFeedback: true}))
 }
 if(JSON.parse(process.env.UAGENT)){
     puppeteer.use(UserAgentPlugin({stripHeadless: JSON.parse(process.env.STRIP) || false, makeWindows: JSON.parse(process.env.WINDOWS) || false}))
