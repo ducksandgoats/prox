@@ -91,9 +91,9 @@ app.get('/feed', async (req, res) => {
         const arr = req.query.ignore ? req.query.ignore.split(',').filter(Boolean) : []
         $(req.query.select).each((i, e) => {
             const el = $(e)
-            const useLink = el.find(req.query.href).attr('href')
-            const useTitle = el.find(req.query.title).text()
-            const useDescription = req.query.description ? el.find(req.query.description).text() : null
+            const useLink = req.query.select === req.query.href ? el.attr('href') : el.find(req.query.href).attr('href')
+            const useTitle = req.query.select === req.query.title ? el.text() : el.find(req.query.title).text()
+            const useDescription = req.query.select === req.query.description ? el.text() : req.query.description ? el.find(req.query.description).text() : null
             if((useLink && useTitle) && !arr.includes(useLink) && !arr.includes(useTitle)){
                 feed.addItem({
                     link: useLink,
