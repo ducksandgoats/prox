@@ -22,7 +22,20 @@ if(JSON.parse(process.env.RECAPTCHA)){
 if(JSON.parse(process.env.UAGENT)){
     puppeteer.use(UserAgentPlugin({stripHeadless: JSON.parse(process.env.STRIP) || false, makeWindows: JSON.parse(process.env.WINDOWS) || false}))
 }
-const browser = await puppeteer.launch({headless: process.env.HEADLESS ? JSON.parse(process.env.HEADLESS) : true, args: process.env.ARGS ? process.env.ARGS.split(',').filter(Boolean) : [], executablePath: process.env.EXEC || puppeteer.executablePath() || (await PCR({})).executablePath})
+let browser = await puppeteer.launch({headless: process.env.HEADLESS ? JSON.parse(process.env.HEADLESS) : true, args: process.env.ARGS ? process.env.ARGS.split(',').filter(Boolean) : [], executablePath: process.env.EXEC || puppeteer.executablePath() || (await PCR({})).executablePath})
+
+async function handleDiscon(){
+    console.error(`Browser disconnected, attempting to relaunch...`)
+    try {
+        await browser.close()
+    } catch {
+        console.error('Browser is already closed')
+    }
+    browser = await puppeteer.launch({headless: process.env.HEADLESS ? JSON.parse(process.env.HEADLESS) : true, args: process.env.ARGS ? process.env.ARGS.split(',').filter(Boolean) : [], executablePath: process.env.EXEC || puppeteer.executablePath() || (await PCR({})).executablePath})
+    browser.once('disconnected', handleDiscon)
+}
+
+browser.once('disconnected', handleDiscon);
 
 async function handle(signal){
     console.log(signal)
