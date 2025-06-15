@@ -150,15 +150,11 @@ app.get('/mid', async (req, res) => {
         if(req.query.delay){
             await new Promise((res) => setTimeout(res, Number(req.query.delay)))
         }
-        
+
         const obj = http.headers()
 
-        if(!obj['Content-Type'] || !obj['Content-Type'].includes('xml')){
-            throw new Error("does not have content type header")
-        }
-
-        if(req.query.delay){
-            await new Promise((res) => setTimeout(res, Number(req.query.delay)))
+        if(!obj['content-type'] || !obj['content-type'].includes('xml')){
+            throw new Error("does not have content type header or is not xml")
         }
 
         // Locate the full title with a unique string.
@@ -169,7 +165,7 @@ app.get('/mid', async (req, res) => {
         
         const $ = cheerio.load(pageSourceXML, {xml: true})
 
-        res.setHeader('Content-Type', obj['Content-Type'])
+        res.setHeader('Content-Type', obj['content-type'])
 
         return res.status(200).send($.html())
     } catch (error) {
