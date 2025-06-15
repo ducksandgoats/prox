@@ -71,6 +71,10 @@ app.get('/feed', async (req, res) => {
         // Navigate the page to a URL.
         await page.goto(req.query.link, { waitUntil: req.query.wait ? req.query.wait.split(',').filter(Boolean) : ['load'], timeout: req.query.timeout ? Number(req.query.timeout) : 30000 })
 
+        if(req.query.delay){
+            await new Promise((res) => setTimeout(res, Number(req.query.delay)))
+        }
+
         // Locate the full title with a unique string.
         let pageSourceHTML = await page.content()
 
@@ -129,7 +133,55 @@ app.get('/feed', async (req, res) => {
     }
 })
 
-app.get('/prox', async (req, res) => {
+app.get('/mid', async (req, res) => {
+    let page
+    try {
+        if(!req.query.link){
+            throw new Error('must have link query string')
+        }
+        page = await browser.newPage();
+        if(JSON.parse(process.env.RANDOM)){
+            await page.setUserAgent(new UserAgent().toString())
+        }
+
+        // Navigate the page to a URL.
+        const http = await page.goto(req.query.link, { waitUntil: req.query.wait ? req.query.wait.split(',').filter(Boolean) : ['load'], timeout: req.query.timeout ? Number(req.query.timeout) : 30000 })
+
+        if(req.query.delay){
+            await new Promise((res) => setTimeout(res, Number(req.query.delay)))
+        }
+        
+        const obj = http.headers()
+
+        if(!obj['Content-Type'] || !obj['Content-Type'].includes('xml')){
+            throw new Error("does not have content type header")
+        }
+
+        if(req.query.delay){
+            await new Promise((res) => setTimeout(res, Number(req.query.delay)))
+        }
+
+        // Locate the full title with a unique string.
+        let pageSourceXML = await page.content()
+
+        await page.close()
+        page = null
+        
+        const $ = cheerio.load(pageSourceXML, {xml: true})
+
+        res.setHeader('Content-Type', obj['Content-Type'])
+
+        return res.status(200).send($.html())
+    } catch (error) {
+        console.error(error)
+        if(page){
+            await page.close()
+        }
+        return res.status(400).send(`<html><head><title>${error.name}</title></head><body><div><p>${error.message}</p></div></body></html>`)
+    }
+})
+
+app.get('/relay', async (req, res) => {
     let page
     try {
         if(!req.query.link){
@@ -142,6 +194,10 @@ app.get('/prox', async (req, res) => {
 
         // Navigate the page to a URL.
         await page.goto(req.query.link, { waitUntil: req.query.wait ? req.query.wait.split(',').filter(Boolean) : ['load'], timeout: req.query.timeout ? Number(req.query.timeout) : 30000 })
+
+        if(req.query.delay){
+            await new Promise((res) => setTimeout(res, Number(req.query.delay)))
+        }
 
         // Locate the full title with a unique string.
         let pageSourceHTML = await page.content()
